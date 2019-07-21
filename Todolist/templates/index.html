@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% load custom_tags %}
+
+{% block content %}
+
+<div class="cards-listing">
+    {% for list in object_list %}
+        <div class="row">
+            <div class="card view-update {{ list.pk }}">
+                <div class="card__panel-head">
+                    <div class="poster__info">
+                        <a href="{% url 'base' %}" class="poster__name">
+                            {% if post.author.profile_pic %}
+                                <img class="poster__profilepic" src="{{ post.author.profile_pic }}">
+                            {% endif %}
+                            {{ post.author.username }}
+                        </a>
+                    </div>
+                </div>
+                <a href="{% url 'list_detail' list.pk %}">
+                    <img class="card__main-image" src="{{ post.image.url }}">
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock content %}

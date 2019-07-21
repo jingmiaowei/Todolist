@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from .models import Todolist
 
 # Create your views here.
 class TodoListView(LoginRequiredMixin,ListView):
@@ -29,4 +30,16 @@ class TodoDeleteView(DeleteView):
 class TodoDetailView(DetailView):
     model = Todolist
     template_name = "list_detail.html"
+
+def Finish(request, Todolist_id): 
+    if request.POST['status'] == 'finished':
+        a= Todo.objects.get(id=Todolist_id)
+        a.done = True
+        a.save()
+        return redirect("todolist:home")
+    else:
+        a = Todo.objects.get(id=Todolist_id)
+        a.done = False
+        a.save()
+        return redirect("todolist:home")
 
