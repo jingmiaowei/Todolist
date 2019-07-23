@@ -1,0 +1,17 @@
+<div class="navbar navbar-default navbar-fixed-top" id="main-nav">
+    <div class="container desktop">
+        <div class="navbar-header">
+            <a href="/" class="navbar-brand">Jingmiao Todolist</a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="nav navbar-nav navbar-right">
+                    <li>
+                      <a class="nav_link" href="{% url 'make_list' %}"><i class="fa fa-plus" aria-hidden="true"></i></a>
+                    </li>
+            </ul>
+        {% block add%}
+        {% endblock add%}
+        </div>
+    </div>
+</div>

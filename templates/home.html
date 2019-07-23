@@ -1,0 +1,120 @@
+{% load staticfiles %}
+
+{% block content %}
+
+<ul>
+  {% for Todolist in all_items %}
+    <li>{{Todolist.title }}</li>
+  {% endfor %}
+</ul>
+
+ <br>
+    <table class="table table-hover">
+<thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">todo</th>
+      <th scope="col">edit</th>
+      <th scope="col">finish</th>
+      <th scope="col">delete</th>
+    </tr>
+</thead>
+<tbody class="no-underline">
+ 
+    {% for Todolist in all_todo_items %}
+      {% if Todolist.finish%}
+        <tr class="table-dark">
+          <th scope="row" class="text-dark">{{forloop.counter}}</th>
+          <td class="text-dark" id="line-through">{{Todolist.title}}</td>
+          <td><a class="text-secondary" href="#">warn</a></td>
+            <td>
+            <form method="POST" action="/Finish/">
+              {% csrf_token %}
+              <input name="status" type="hidden" value="unfinish" >
+              <button type="submit" class="btn btn-outline-success my-2 my-sm-0" >unsave</button>
+            </form>
+          </td>
+          <td>
+        
+              <button data-toggle="modal" data-target="#exampleModal" type="button" class="btn btn-outline-success my-2 my-sm-0" >delete</button>
+ 
+            
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">please confirm</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    Are you sure you want to delete? {{Todolist.title}}
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">unsave</button>
+                    <form method="POST" action="/TodoDelete/">
+                      {% csrf_token %}
+                       <button type="submit" class="btn btn-primary">Confirm</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+ 
+      {% else %}
+        <tr>
+          <th scope="row">{{forloop.counter}}</th>
+          <td>{{Todolist.title}}</td>
+            <form method="POST" action="/NewEdit/">
+              {% csrf_token %}
+              <input name="status" type="hidden" value="finish" >
+              <button type="submit" class="btn btn-outline-success my-2 my-sm-0">finish</button>
+            </form>
+          <td>
+              <button data-toggle="modal" data-target="#exampleModal{{forloop.counter}}" type="button" class="btn btn-outline-success my-2 my-sm-0" >delete</button>
+ 
+            <div class="modal fade" id="exampleModal{{forloop.counter}}" tabindex="-1" role="dialog" aria-labelledby="exampleModal{{forloop.counter}}Label" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModal{{forloop.counter}}Label">please confirm</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    Are you sure you want to delete this unfinished item?{{Todolist.title}}
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">canceal</button>
+                    <form method="POST" action="/TodoDelete/">
+                      {% csrf_token %}
+                       <button type="submit" class="btn btn-primary">confirm</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+        </tr>
+      {% endif %}
+ 
+    {% endfor %}
+ 
+    </tbody>
+</table>
+
+{% endblock content %}
+
+
+
+ <form  method="POST" action="/addTodo/">
+          {% csrf_token %}
+          <input  type="text"  name="title"/>
+          <imput  type="submit" value="Add"/>
+ </form>
+

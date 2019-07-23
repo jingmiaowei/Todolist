@@ -1,45 +1,50 @@
 from django.shortcuts import render,redirect
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponse
 from django.urls import reverse_lazy
-from django.views.generic import DetailView, ListView
+from django.views.generic import ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from .models import Todolist
+from django.template import RequestContext
+from django.http import HttpResponse, HttpResponseRedirect
 
 # Create your views here.
-class TodoListView(LoginRequiredMixin,ListView):
-    model = Todolist
-    template_name = "index.html"
-    login_url = 'login'
+def TodoListView(request):
+    all_todo_items = Todolist.objects.all()
+    return render(request,'home.html',
+            {'all_items': all_todo_items})
 
-class TodoCreateView(CreateView):
-    model = Todolist
-    template_name = "make_list.html"
-    fields = '__all__'
+def addTodo(request):
+    new_todo = Todolist(content = request.POST['title'])
+    new_todo.save()
+    return HttpResponseRedirect('/home/')
 
-class TodoUpdateView(UpdateView):
-    model = Todolist
-    template_name = "update_list.html"
-    fields = ('title',)
+def TodoDelete(request,Todolist_id):
+    delete_todo = Todolist.objects.get(id=Todolist_id)
+    delete_todo.delete()
+    return HttpResponseRedirect('/home/')
 
-class TodoDeleteView(DeleteView):
-    model = Todolist
-    template_name = "delete_list.html"
-    success_url = reverse_lazy ('home')
+def TodoEdit(request):
+    return render(request,'edit.html') 
+ 
+ 
+def NewEdit(request,Todolist_id):
+    if request.method == 'POST':
+        new_todo = Todolist(content = request.POST['title'])
+        new_todo.title = request.POST['edited']
+        new_todo.save()
+        return redirect("home")
+    elif request.method == 'GET':
+        content1 = {'needadd': Todolist.objects.get(id=Todolist_id).title }
+        return render(request,'newedit.html',content1)  
 
-class TodoDetailView(DetailView):
-    model = Todolist
-    template_name = "list_detail.html"
-
-def Finish(request, Todolist_id): 
+def Finish(request, id): 
     if request.POST['status'] == 'finished':
-        a= Todo.objects.get(id=Todolist_id)
-        a.done = True
+        a= Todolist.objects.get(id=id)
+        a.finish = True
         a.save()
-        return redirect("todolist:home")
+        return redirect ("finish.html")
     else:
-        a = Todo.objects.get(id=Todolist_id)
-        a.done = False
+        a = Todolist.objects.get(id=id)
+        a.finish = False
         a.save()
-        return redirect("todolist:home")
-
+        return redirect ("finish.html")
